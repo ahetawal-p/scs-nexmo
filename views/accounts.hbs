@@ -1,0 +1,11 @@
+<ul>
+    {{#accounts}}
+		<li>{{Name}}
+			<ul>
+			{{#Cases.records}}
+				<li>{{Subject}}</li>
+			{{/Cases.records}}
+			</ul>
+		</li>
+	{{/accounts}}
+</ul>

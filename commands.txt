@@ -1,0 +1,10 @@
+DEBUG=express:* node ./bin/www
+
+
+Here's how I got access to a Nexmo WeChat test account:
+
+1. Install WeChat on your phone and create a WeChat user profile.
+2. Sign up here for a Nexmo account: https://dashboard.nexmo.com/sign-up
+3. Send donovan.rose@@nexmo.com (the partnership manager) an email with the email address and mobile number you used to sign up.
+4. Receive an email from Donovan with a QR code attached. 
+5. From WeChat on your phone, scan the QR code.
