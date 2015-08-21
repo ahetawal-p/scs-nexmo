@@ -7,6 +7,11 @@ router.get('/', function(req, res) {
 	
 	res.render('index');
 
+	console.log("Request is >>> ");
+	
+	console.log(req);
+	
+
 	// // Local DEV ORG
 	// var clientId='3MVG9AOp4kbriZOLjMhf4yQit9g7Gvhre508HErmJVGWZK9wRQOKPXk75ap.PGk4By1lTXx4QNO6PKC9GBWlJ';
 	// var secret='8915655022077478930';
@@ -32,6 +37,18 @@ router.get('/', function(req, res) {
 
 
 });
+
+/* GET home page. */
+router.get('/inbound', function(req, res) {
+	
+	res.render('index');
+
+	console.log("Inbound Request is >>> ");
+	
+	console.log(req);
+});
+
+
 
 router.post('/',function(req,res){
 	var clientId=req.body.clientId;
