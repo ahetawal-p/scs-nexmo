@@ -8,3 +8,8 @@ Here's how I got access to a Nexmo WeChat test account:
 3. Send donovan.rose@@nexmo.com (the partnership manager) an email with the email address and mobile number you used to sign up.
 4. Receive an email from Donovan with a QR code attached. 
 5. From WeChat on your phone, scan the QR code.
+
+
+
+
+GET /inbound?to=ott%3Awechat%3Agh_27a6733c7da0&user_name=Amit+H&text=Another+test+to+check+&message_timestamp=2015-08-22+00%3A03%3A07&message_id=6185619575021235243&user_id=oGBOUxCRgfs6ECuAxP1yaym2QCWs&from=ott%3Awechat%3AoGBOUxCRgfs6ECuAxP1yaym2QCWs&type=text
