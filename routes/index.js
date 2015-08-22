@@ -43,9 +43,17 @@ router.get('/inbound', function(req, res) {
 	
 	res.render('index');
 
-	console.log("Inbound Request is >>> ");
-	
-	console.log(req);
+	console.log("Inbound Request reached...");
+	var data = {};
+	data.userName = req.params.user_name;
+	data.message = req.params.text;
+	data.timestamp = req.params.message_timestamp;
+	data.fromUserId = req.params.user_id;
+	data.ottURI = req.params.from;
+
+	console.log("Data Object is ");
+	console.log(data);
+
 });
 
 
