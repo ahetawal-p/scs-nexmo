@@ -52,7 +52,9 @@ router.get('/inbound', function(req, res) {
 	data.timestamp = req.query.message_timestamp;
 	data.fromUserId = req.query.user_id;
 	data.ottURI = req.query.from;
-
+	data.messageId = req.query.message_id;
+	data.messageType =req.query.type;
+	
 	console.log("Data Object is ");
 	console.log(data);
 
