@@ -7,9 +7,9 @@ router.get('/', function(req, res) {
 	
 	res.render('index');
 
-	console.log("Request is >>> ");
+	//console.log("Request is >>> ");
 	
-	console.log(req);
+	//console.log(req);
 	
 
 	// // Local DEV ORG
@@ -44,12 +44,14 @@ router.get('/inbound', function(req, res) {
 	res.render('index');
 
 	console.log("Inbound Request reached...");
+	//console.log(req.query.test);
+
 	var data = {};
-	data.userName = req.params.user_name;
-	data.message = req.params.text;
-	data.timestamp = req.params.message_timestamp;
-	data.fromUserId = req.params.user_id;
-	data.ottURI = req.params.from;
+	data.userName = req.query.user_name;
+	data.message = req.query.text;
+	data.timestamp = req.query.message_timestamp;
+	data.fromUserId = req.query.user_id;
+	data.ottURI = req.query.from;
 
 	console.log("Data Object is ");
 	console.log(data);
