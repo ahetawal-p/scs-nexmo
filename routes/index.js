@@ -32,18 +32,17 @@ router.get('/inbound', function(req, res) {
 	console.log("Data Object is ");
 	console.log(data);
 
-<<<<<<< .merge_file_wkHypg
+
 
 	// Send it to SFDC
 	var postData = JSON.stringify({
-	  'Name' : 'Hello World!',
+	  'Name' : 'Hello World! @ ' + data.timestamp ,
 	  'R6PostId' : data.messageId,
 	  'Content' : data.message
 	});
 
 	var options = {
 	  hostname: 'na6.salesforce.com',
-	  port: 80,
 	  path: '/services/data/v34.0/sobjects/socialpost',
 	  method: 'POST',
 	  headers: {
@@ -54,18 +53,18 @@ router.get('/inbound', function(req, res) {
 
 	var sfdcReq = https.request(options, function(sfdcRes) {
 	  console.log('STATUS: ' + sfdcRes.statusCode);
-	  sfdcRes.setEncoding('utf8');
+	 // sfdcRes.setEncoding('utf8');
 	  sfdcRes.on('data', function (chunk) {
 	    
 	    console.log('Posted Data to SFDC' + chunk);
 
 	    console.log("Making outbound call");
 		var outBoundMessage = "Hello " + data.userName;
+		outBoundMessage += " Why are you asking me " + data.message + " ?";
 		var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
 		baseQuery+=data.ottURI + '&text=' + outBoundMessage;
 		
-		//baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&to=ott:wechat:oGBOUxCRgfs6ECuAxP1yaym2QCWs&type=text&text=Test_Resposne';
-
+		
 		console.log("Base query is : " + baseQuery);
 
 
@@ -74,25 +73,15 @@ router.get('/inbound', function(req, res) {
 		https.get(baseQuery, function(res1) {
 	  		res1.on("data", function(chunk) {
 	    		console.log("BODY: " + chunk);
-	    		res.set('Content-Type', 'text/html');
-				res.send(new Buffer(chunk));
+	    		res.sendStatus(200);
 	  		});
 		
 		}).on('error', function(e) {
 	  			console.log("Got error: " + e.message);
 		});
 
+	  		
 	  });
-
-=======
-	console.log("Making outbound call");
-	var outBoundMessage = "Hello " + data.userName + "!!";
-	outBoundMessage += " Why are you asking me " + data.message + " ?";
-	var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
-	baseQuery+=data.ottURI + '&text=' + outBoundMessage;
-	
-	console.log("Base query is : " + baseQuery);
->>>>>>> .merge_file_6JSJJK
 
 	});
 
