@@ -73,7 +73,7 @@ router.get('/inbound', function(req, res) {
 		https.get(baseQuery, function(res1) {
 	  		res1.on("data", function(chunk) {
 	    		console.log("BODY: " + chunk);
-	    		res.sendStatus(200);
+	    		//res.sendStatus(200);
 	  		});
 		
 		}).on('error', function(e) {
