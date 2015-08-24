@@ -8,8 +8,8 @@ router.get('/', function(req, res, next) {
 		clientId: req.session.clientId,
 		clientSecret: req.session.secret,
 		redirectUri: process.env.redirect_url || 'http://localhost:3000/accounts',
-		loginUrl : 'http://ahetawal-wsl:6109'
-		//loginUrl : 'https://login.salesforce.com'
+		//loginUrl : 'http://ahetawal-wsl:6109'
+		loginUrl : 'https://login.salesforce.com'
 	});
 
 	var conn = new jsforce.Connection({oauth2: oauth2, logLevel:'DEBUG'});
@@ -30,8 +30,8 @@ router.get('/', function(req, res, next) {
 				// res.redirect('/');
 				return next(err);
 			}
-			//res.render('accounts', {title: 'Accounts List', accounts: result.records});
-			res.redirect('http://ahetawal-wsl:6109/services/socialengagement/oauth?code=Bearer ' + conn.accessToken);
+			res.render('accounts', {title: 'Accounts List', accounts: result.records});
+			//res.redirect('http://ahetawal-wsl:6109/services/socialengagement/oauth?code=Bearer ' + conn.accessToken);
 		});
 	});
 });

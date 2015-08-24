@@ -32,27 +32,67 @@ router.get('/inbound', function(req, res) {
 	console.log("Data Object is ");
 	console.log(data);
 
-	console.log("Making outbound call");
-	var outBoundMessage = "Hello " + data.userName;
-	var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
-	baseQuery+=data.ottURI + '&text=' + outBoundMessage;
-	
-	//baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&to=ott:wechat:oGBOUxCRgfs6ECuAxP1yaym2QCWs&type=text&text=Test_Resposne';
 
-	console.log("Base query is : " + baseQuery);
-
-	https.get(baseQuery, function(res1) {
-  		res1.on("data", function(chunk) {
-    		console.log("BODY: " + chunk);
-    		res.set('Content-Type', 'text/html');
-			res.send(new Buffer(chunk));
-  		});
-	
-	}).on('error', function(e) {
-  			console.log("Got error: " + e.message);
+	// Send it to SFDC
+	var postData = JSON.stringify({
+	  'Name' : 'Hello World!',
+	  'R6PostId' : data.messageId,
+	  'Content' : data.message
 	});
-	
 
+	var options = {
+	  hostname: 'na6.salesforce.com',
+	  port: 80,
+	  path: '/services/data/v34.0/sobjects/socialpost',
+	  method: 'POST',
+	  headers: {
+	    'Content-Type': 'application/json',
+	    'Authorization': 'Bearer 00D80000000PUfv!ARQAQBoCxrdaDpOIx09tn7GS0.7gGAABkpe_GCTpa3MSWATexqHBq5a2YXUlrN0crYFBIVqsBN1ZkF1_uR21tOlsSwtIdtJD'
+	  }
+	};
+
+	var sfdcReq = https.request(options, function(sfdcRes) {
+	  console.log('STATUS: ' + sfdcRes.statusCode);
+	  sfdcRes.setEncoding('utf8');
+	  sfdcRes.on('data', function (chunk) {
+	    
+	    console.log('Posted Data to SFDC' + chunk);
+
+	    console.log("Making outbound call");
+		var outBoundMessage = "Hello " + data.userName;
+		var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
+		baseQuery+=data.ottURI + '&text=' + outBoundMessage;
+		
+		//baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&to=ott:wechat:oGBOUxCRgfs6ECuAxP1yaym2QCWs&type=text&text=Test_Resposne';
+
+		console.log("Base query is : " + baseQuery);
+
+
+
+
+		https.get(baseQuery, function(res1) {
+	  		res1.on("data", function(chunk) {
+	    		console.log("BODY: " + chunk);
+	    		res.set('Content-Type', 'text/html');
+				res.send(new Buffer(chunk));
+	  		});
+		
+		}).on('error', function(e) {
+	  			console.log("Got error: " + e.message);
+		});
+
+	  });
+
+
+	});
+
+	sfdcReq.on('error', function(e) {
+	  console.log('problem with SFDC request: ' + e.message);
+	});
+
+	// write data to request body
+	sfdcReq.write(postData);
+	sfdcReq.end();
 
 
 });
@@ -83,16 +123,13 @@ router.post('/',function(req,res){
 	var secret=req.body.secret;
 
 	// Local DEV ORG
-	var clientId='3MVG9AOp4kbriZOLjMhf4yQit9g7Gvhre508HErmJVGWZK9wRQOKPXk75ap.PGk4By1lTXx4QNO6PKC9GBWlJ';
-	var secret='8915655022077478930';
+	//var clientId='3MVG9AOp4kbriZOLjMhf4yQit9g7Gvhre508HErmJVGWZK9wRQOKPXk75ap.PGk4By1lTXx4QNO6PKC9GBWlJ';
+	//var secret='8915655022077478930';
 
-	// PROD DEV Org
-	//var clientId='3MVG9AOp4kbriZOLjMhf4yQit9qFjRTs5WINg76XtjozpoDdKFz7F7.Tj8TixrkAFytpzRFRD4eKQircBif3Q';
-	//var secret= '5797889978287280572';
+	
 
-
-	//var clientId = '3MVG9sG9Z3Q1Rlbf6ERG76nkgAxCKOLBRlxOWmTfbjFKdX3c3xM_vbnjxw6OHNeGUpdHpwLYvqPUCJTSiNSA_';
-	//var secret = '3631655814888186810';
+	var clientId = '3MVG9sG9Z3Q1Rlbf6ERG76nkgAxCKOLBRlxOWmTfbjFKdX3c3xM_vbnjxw6OHNeGUpdHpwLYvqPUCJTSiNSA_';
+	var secret = '3631655814888186810';
 
 	req.session.clientId = clientId;
 	req.session.secret = secret;
@@ -103,8 +140,8 @@ router.post('/',function(req,res){
 		clientId: clientId,
 		clientSecret: secret,
 		redirectUri: process.env.redirect_url || 'http://localhost:3000/accounts',
-		//loginUrl : 'https://login.salesforce.com'
-		loginUrl : 'http://ahetawal-wsl:6109'
+		loginUrl : 'https://login.salesforce.com'
+		//loginUrl : 'http://ahetawal-wsl:6109'
 	});
 	res.redirect(oauth2.getAuthorizationUrl({scope: 'api'}));
 });
