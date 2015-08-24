@@ -33,12 +33,17 @@ router.get('/inbound', function(req, res) {
 	console.log(data);
 
 
+	// data.timestamp = '123';
+	// data.messageId = '12';
+	// data.message = '123';
+	
+
 
 	// Send it to SFDC
 	var postData = JSON.stringify({
-	  'Name' : 'Hello World! @ ' + "123" ,
-	  'R6PostId' : '12',
-	  'Content' : '123'
+	  'Name' : 'Hello World! @ ' +  data.timestamp,
+	  'R6PostId' : data.messageId,
+	  'Content' : data.message
 	});
 
 	var options = {
@@ -54,8 +59,7 @@ router.get('/inbound', function(req, res) {
 	var sfdcReq = https.request(options, function(sfdcRes) {
 	  console.log('STATUS: ' + sfdcRes.statusCode);
 	 	if(sfdcRes.statusCode == 201){
-	 		sfdcRes.end();
-	 		console.log('Posted Data to SFDC' + chunk);
+	 		
 
 	    console.log("Making outbound call");
 		var outBoundMessage = "Hello " + data.userName;
@@ -73,6 +77,7 @@ router.get('/inbound', function(req, res) {
 	  		res1.on("data", function(chunk) {
 	    		console.log("BODY: " + chunk);
 	    		res.end();
+	    		//res.sendStatus(200);
 	  		});
 		
 		}).on('error', function(e) {
@@ -81,7 +86,12 @@ router.get('/inbound', function(req, res) {
 
 	 	}
 
-	 
+	 // sfdcRes.setEncoding('utf8');
+	  sfdcRes.on('data', function (chunk) {
+	    
+	    console.log('Posted Data to SFDC' + chunk);
+	  		
+	  });
 
 	});
 
