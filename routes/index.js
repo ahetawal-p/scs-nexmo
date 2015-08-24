@@ -33,12 +33,11 @@ router.get('/inbound', function(req, res) {
 	console.log(data);
 
 	console.log("Making outbound call");
-	var outBoundMessage = "Hello " + data.userName;
+	var outBoundMessage = "Hello " + data.userName + "!!";
+	outBoundMessage += " Why are you asking me " + data.message + " ?";
 	var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
 	baseQuery+=data.ottURI + '&text=' + outBoundMessage;
 	
-	//baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&to=ott:wechat:oGBOUxCRgfs6ECuAxP1yaym2QCWs&type=text&text=Test_Resposne';
-
 	console.log("Base query is : " + baseQuery);
 
 	https.get(baseQuery, function(res1) {
