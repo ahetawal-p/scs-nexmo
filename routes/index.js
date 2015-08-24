@@ -32,6 +32,7 @@ router.get('/inbound', function(req, res) {
 	console.log("Data Object is ");
 	console.log(data);
 
+<<<<<<< .merge_file_wkHypg
 
 	// Send it to SFDC
 	var postData = JSON.stringify({
@@ -83,6 +84,15 @@ router.get('/inbound', function(req, res) {
 
 	  });
 
+=======
+	console.log("Making outbound call");
+	var outBoundMessage = "Hello " + data.userName + "!!";
+	outBoundMessage += " Why are you asking me " + data.message + " ?";
+	var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
+	baseQuery+=data.ottURI + '&text=' + outBoundMessage;
+	
+	console.log("Base query is : " + baseQuery);
+>>>>>>> .merge_file_6JSJJK
 
 	});
 
