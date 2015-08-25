@@ -84,6 +84,8 @@ router.get('/inbound', function(req, res) {
 	  			console.log("Got error: " + e.message);
 		});
 
+	 	} else {
+	 		res.end();
 	 	}
 
 	 // sfdcRes.setEncoding('utf8');
