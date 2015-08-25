@@ -21,6 +21,7 @@ router.get('/inbound', function(req, res) {
 	//console.log(req.query.test);
 
 	var data = {};
+	data.userImg = req.query.user_img;
 	data.userName = req.query.user_name;
 	data.message = req.query.text;
 	data.timestamp = req.query.message_timestamp;
