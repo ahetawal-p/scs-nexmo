@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var jsforce = require('jsforce');
+var constants = require('../constants');
 
 /* GET accounts page. */
 router.get('/', function(req, res, next) {
@@ -8,11 +9,10 @@ router.get('/', function(req, res, next) {
 		clientId: req.session.clientId,
 		clientSecret: req.session.secret,
 		redirectUri: process.env.redirect_url || 'http://localhost:3000/accounts',
-		//loginUrl : 'http://ahetawal-wsl:6109'
-		loginUrl : 'https://login.salesforce.com'
+		loginUrl : process.env.login_url || 'http://ahetawal-wsl:6109'
 	});
 
-	var conn = new jsforce.Connection({oauth2: oauth2, logLevel:'DEBUG'});
+	var conn = new jsforce.Connection({oauth2: oauth2, logLevel:'INFO'});
 	debugger;
 	conn.authorize(req.query.code, function(err, userInfo) {
 		if (err) {
@@ -22,7 +22,8 @@ router.get('/', function(req, res, next) {
 		req.session.accessToken = conn.accessToken;
 		req.session.instanceUrl = conn.instanceUrl;
 		
-		console.log("<<<< Access Token >>>>>> " + conn.accessToken);
+		constants.TOKEN_CONST = conn.accessToken;
+		console.log("<<<< Access Token >>>>>> " + constants.TOKEN_CONST);
 
 		conn.query('SELECT id, name, (SELECT id, Subject FROM Cases) FROM Account LIMIT 10', function(err, result) {
 			if (err) {
