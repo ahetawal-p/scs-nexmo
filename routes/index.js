@@ -147,40 +147,6 @@ router.get('/oauth2/callback',function(req,res){
 });
 
 
-function setupSalesforceConnection(req){
-
-	var localOAuth2 = req.app.get('oAuth2');
-
-	var accessToken = req.app.get('accessToken');
-	var refreshToken = req.app.get('refreshToken');
-	var instanceUrl = req.app.get('instanceUrl');
-	var localOAuth2 = req.app.get('oAuth2');
-	
-
-	var conn = new jsforce.Connection({
-					oauth2 : localOAuth2,
-  					instanceUrl : instanceUrl,
-  					accessToken : accessToken,
-  					refreshToken : refreshToken,
-  					logLevel:'DEBUG'
-				});
-	
-	conn.on("refresh", function(accessToken, res) {
-			console.log("<<<<< Access Token Refreshed >>>");
-			console.log("Refresh token : " + res.refresh_token);
-			console.log("Instance url : " + res.instance_url);
-			
-			req.app.set('accessToken', accessToken);
-			req.app.set('refreshToken', res.refresh_token);
-			req.app.set('instanceUrl', res.instance_url);
-			
-
-	});
-	console.log(conn);
-	return conn;
-
-}
-
 function sampleHttpCallToSFDC() {
 	// var postData = JSON.stringify({
 	//   'Name' : 'Hello World! @ ' +  data.timestamp,
