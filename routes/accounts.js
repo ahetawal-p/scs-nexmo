@@ -8,6 +8,8 @@ var storage = memjs.Client.create();
 router.get('/', function(req, res, next) {
 
 	storage.get('sfdc_conn', function(err, conn){
+		console.log("Connection is >> ");
+		console.log(conn);
 		if(conn){
 			conn.query('SELECT id, name, (SELECT id, Subject FROM Cases) FROM Account LIMIT 10', function(err, result) {
 			if (err) {

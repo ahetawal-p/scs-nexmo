@@ -75,7 +75,7 @@ router.get('/inbound', function(req, res) {
 					}
 					
 				});
-			
+
 		} else {
 			res.send("Cannot find connection");
 		}
@@ -168,6 +168,7 @@ function setupSalesforceConnection(req){
 			
 
 	});
+	console.log(conn);
 	return conn;
 
 }
