@@ -4,11 +4,15 @@ var jsforce = require('jsforce');
 
 var createConnection = function(oAuthData, localOAuth2) {
 
+	var parsedOAuthdata = JSON.parse(oAuthData);
+	console.log('Parsed memchache data ' + parsedOAuthdata);
+	
+
 	var conn = new jsforce.Connection({
 					oauth2 : localOAuth2,
-  					instanceUrl : oAuthData.instanceUrl,
-  					accessToken : oAuthData.accessToken,
-  					refreshToken : oAuthData.refreshToken,
+  					instanceUrl : parsedOAuthdata.instanceUrl,
+  					accessToken : parsedOAuthdata.accessToken,
+  					refreshToken : parsedOAuthdata.refreshToken,
   					logLevel:'DEBUG'
 				});
 	
@@ -24,7 +28,7 @@ var createConnection = function(oAuthData, localOAuth2) {
 		oAuthData['instanceUrl'] = conn.instanceUrl;
 
 		console.log('Setting data in memchache...');
-		storage.set('oAuthData', oAuthData);
+		storage.set('oAuthData', JSON.stringify(oAuthData));
 
 	});	
 

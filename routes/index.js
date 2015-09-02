@@ -43,8 +43,7 @@ router.get('/inbound', function(req, res) {
 	
 
 	storage.get('oAuthData', function(err, data){
-		console.log("Data is >> ");
-		console.log(data);
+		console.log("Data is >> " + data);
 		if(data){
 			var conn = util.getConnection(data, req.app.get('oAuth2'));
 
@@ -140,7 +139,7 @@ router.get('/oauth2/callback',function(req,res){
 	oAuthData['instanceUrl'] = conn.instanceUrl;
 	
 	console.log('Setting data in memchache...');
-	storage.set('oAuthData', oAuthData);
+	storage.set('oAuthData', JSON.stringify(oAuthData));
 
 	res.redirect('/accounts');	
 	});

@@ -9,8 +9,8 @@ var util = require('../constants');
 router.get('/', function(req, res, next) {
 
 	storage.get('oAuthData', function(err, data){
-		console.log("Data is >>");
-		console.log(data);
+		console.log("Data is >> " + data);
+		
 		if(data){
 			var conn = util.getConnection(data, req.app.get('oAuth2'));
 
