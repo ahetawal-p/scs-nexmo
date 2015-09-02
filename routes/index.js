@@ -37,7 +37,10 @@ router.get('/inbound', function(req, res) {
 	
 
 	var conn = constants.SFDC_CONN;
-
+	
+	console.log("Connection is >> ");
+	console.log(conn);
+	
 	// Send it to SFDC
 	var postData = {
 	  'Name' : 'Hello World! @ ' +  data.timestamp,
