@@ -203,7 +203,7 @@ router.get('/oauth2/auth',function(req,res){
 	var localOAuth2 = req.app.get('oAuth2');
 	console.log("OAuth Object is >> ");
 	console.log(localOAuth2);
-	res.redirect(localOAuth2.getAuthorizationUrl({scope: 'api id refresh_token'}));
+	res.redirect(localOAuth2.getAuthorizationUrl({scope: 'api refresh_token'}));
 });
 
 
