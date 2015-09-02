@@ -143,7 +143,7 @@ function setupSalesforceConnection(req){
   					instanceUrl : instanceUrl,
   					accessToken : accessToken,
   					refreshToken : refreshToken,
-  					logLevel:'INFO'
+  					logLevel:'DEBUG'
 				});
 	
 	conn.on("refresh", function(accessToken, res) {
