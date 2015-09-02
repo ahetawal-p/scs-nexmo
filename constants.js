@@ -7,7 +7,6 @@ var createConnection = function(oAuthData, localOAuth2) {
 	var parsedOAuthdata = JSON.parse(oAuthData);
 	console.log('Parsed memchache data ' + parsedOAuthdata);
 	
-
 	var conn = new jsforce.Connection({
 					oauth2 : localOAuth2,
   					instanceUrl : parsedOAuthdata.instanceUrl,

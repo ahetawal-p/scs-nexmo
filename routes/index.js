@@ -42,10 +42,10 @@ router.get('/inbound', function(req, res) {
 	// data.message = '123';
 	
 
-	storage.get('oAuthData', function(err, data){
-		console.log("Data is >> " + data);
-		if(data){
-			var conn = util.getConnection(data, req.app.get('oAuth2'));
+	storage.get('oAuthData', function(err, authData){
+		console.log("Auth Data is >> " + authData);
+		if(authData){
+			var conn = util.getConnection(authData, req.app.get('oAuth2'));
 
 			// Send it to SFDC
 			var postData = {
