@@ -7,7 +7,6 @@ var constants = require('../constants');
 
 /* GET home page. */
 router.get('/', function(req, res) {
-	
 	res.render('index');
 
 });
@@ -37,6 +36,103 @@ router.get('/inbound', function(req, res) {
 	// data.message = '123';
 	
 
+	var conn = constants.SFDC_CONN;
+
+	// Send it to SFDC
+	var postData = JSON.stringify({
+	  'Name' : 'Hello World! @ ' +  data.timestamp,
+	  'R6PostId' : data.messageId,
+	  'Content' : data.message
+	});
+
+	conn.sobject("socialpost").create(postData, function(err, result) {
+			console.log("Resposne received from Salesforce....")
+			if (err || !ret.success) { 
+				console.error(err, ret);
+				res.end();
+			} else {
+				console.log("Making outbound call");
+				var outBoundMessage = "Hello " + data.userName;
+				outBoundMessage += " Why are you asking me " + data.message + " ?";
+				var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
+				baseQuery+=data.ottURI + '&text=' + outBoundMessage;
+				
+				
+				console.log("Base query is : " + baseQuery);
+
+				https.get(baseQuery, function(res1) {
+			  		res1.on("data", function(chunk) {
+			    		console.log("BODY: " + chunk);
+			    		res.end();
+			    	});
+				
+				}).on('error', function(e) {
+			  			console.log("Got error: " + e.message);
+				});
+			}
+			
+		});
+});
+
+
+
+/* GET home page. */
+router.get('/delivery', function(req, res) {
+	console.log("Delivery receipt received..");
+	var delivery = {};
+	delivery.messageRecepient = req.query.to;
+	delivery.messageId = req.query.message_id;
+	delivery.status = req.query.status;
+	delivery.statusInfo = req.query.status_info;
+	delivery.messageTimestamp = req.query.message_timestamp;
+
+	console.log("Delivery Object is ");
+	console.log(delivery);
+
+	res.sendStatus(200);
+
+
+});
+
+router.get('/oauth2/auth',function(req,res){
+	
+	var localOAuth2 = req.app.get('oAuth2');
+	console.log("OAuth Object is >> ");
+	console.log(localOAuth2);
+	res.redirect(localOAuth2.getAuthorizationUrl({scope: 'api refresh_token'}));
+});
+
+
+router.get('/oauth2/callback',function(req,res){
+	
+	var localOAuth2 = req.app.get('oAuth2');
+
+	var conn = new jsforce.Connection({oauth2: localOAuth2, logLevel:'INFO'});
+	conn.authorize(req.query.code, function(err, userInfo) {
+		if (err) {
+			console.error(err);
+			return next(err);
+		}
+	console.log("Access token: " + conn.accessToken);
+	console.log("Refresh token: " + conn.refreshToken);
+	console.log("Instance Url: " + conn.instanceUrl);
+
+	req.app.set('accessToken', conn.accessToken);
+	req.app.set('refreshToken', conn.refreshToken);
+	req.app.set('instanceUrl', conn.instanceUrl);
+	
+	constants.SFDC_CONN = setupSalesforceConnection(req);
+	
+	res.redirect('/accounts');	
+	});
+
+});
+
+
+function setupSalesforceConnection(req){
+
+	var localOAuth2 = req.app.get('oAuth2');
+
 	var accessToken = req.app.get('accessToken');
 	var refreshToken = req.app.get('refreshToken');
 	var instanceUrl = req.app.get('instanceUrl');
@@ -63,37 +159,11 @@ router.get('/inbound', function(req, res) {
 			constants.TOKEN_CONST = accessToken;
 
 	});
+	return conn;
 
-	console.log("<<<< Access Token >>>>>> " + constants.TOKEN_CONST);
+}
 
-	// Send it to SFDC
-	var postData = JSON.stringify({
-	  'Name' : 'Hello World! @ ' +  data.timestamp,
-	  'R6PostId' : data.messageId,
-	  'Content' : data.message
-	});
-
-	conn.sobject("Social Post").create(postData, function(err, result) {
-			console.log("Resposne received from Salesforce....")
-			if (err) {
-				 console.error(err);
-			}
-			res.end();	
-		});
-
-
-
-
-
-
-
-
-
-
-
-	
-
-
+function sampleHttpCallToSFDC() {
 	// var headerAuth = 'Bearer ' + constants.TOKEN_CONST;
 	// console.log("<<<< Header AUTH TO BE USED >>>>>> " + headerAuth);
 
@@ -149,89 +219,10 @@ router.get('/inbound', function(req, res) {
 	// sfdcReq.end();
 
 
-});
 
 
 
-/* GET home page. */
-router.get('/delivery', function(req, res) {
-	console.log("Delivery receipt received..");
-	var delivery = {};
-	delivery.messageRecepient = req.query.to;
-	delivery.messageId = req.query.message_id;
-	delivery.status = req.query.status;
-	delivery.statusInfo = req.query.status_info;
-	delivery.messageTimestamp = req.query.message_timestamp;
-
-	console.log("Delivery Object is ");
-	console.log(delivery);
-
-	res.sendStatus(200);
-
-
-});
-
-
-router.post('/',function(req,res){
-	var clientId=req.body.clientId;
-	var secret=req.body.secret;
-
-	// Local DEV ORG
-	//var clientId='3MVG9AOp4kbriZOLjMhf4yQit9g7Gvhre508HErmJVGWZK9wRQOKPXk75ap.PGk4By1lTXx4QNO6PKC9GBWlJ';
-	//var secret='8915655022077478930';
-	
-	var clientId = process.env.CLIENT_KEY || '3MVG9sG9Z3Q1Rlbf6ERG76nkgAxCKOLBRlxOWmTfbjFKdX3c3xM_vbnjxw6OHNeGUpdHpwLYvqPUCJTSiNSA_';
-	var secret = process.env.CLIENT_SECRET || '3631655814888186810';
-
-	req.session.clientId = clientId;
-	req.session.secret = secret;
-
-	console.error(clientId + ' ' + secret);
-
-	var oauth2 = new jsforce.OAuth2({
-		clientId: clientId,
-		clientSecret: secret,
-		redirectUri: process.env.redirect_url || 'http://localhost:3000/accounts',
-		loginUrl : process.env.login_url || 'http://ahetawal-wsl:6109'
-	});
-	res.redirect(oauth2.getAuthorizationUrl({scope: 'api'}));
-});
-
-
-router.get('/oauth2/auth',function(req,res){
-	
-	var localOAuth2 = req.app.get('oAuth2');
-	console.log("OAuth Object is >> ");
-	console.log(localOAuth2);
-	res.redirect(localOAuth2.getAuthorizationUrl({scope: 'api refresh_token'}));
-});
-
-
-router.get('/oauth2/callback',function(req,res){
-	
-	var localOAuth2 = req.app.get('oAuth2');
-
-	var conn = new jsforce.Connection({oauth2: localOAuth2, logLevel:'INFO'});
-	conn.authorize(req.query.code, function(err, userInfo) {
-		if (err) {
-			console.error(err);
-			return next(err);
-		}
-	console.log("Access token: " + conn.accessToken);
-	console.log("Refresh token: " + conn.refreshToken);
-	console.log("Instance Url: " + conn.instanceUrl);
-
-	req.app.set('accessToken', conn.accessToken);
-	req.app.set('refreshToken', conn.refreshToken);
-	req.app.set('instanceUrl', conn.instanceUrl);
-	
-	
-	res.redirect('/accounts');	
-	});
-
-});
-
-
+}
 
 
 module.exports = router;
