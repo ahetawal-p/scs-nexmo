@@ -56,8 +56,6 @@ router.get('/inbound', function(req, res) {
 				outBoundMessage += " Why are you asking me " + data.message + " ?";
 				var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
 				baseQuery+=data.ottURI + '&text=' + outBoundMessage;
-				
-				
 				console.log("Base query is : " + baseQuery);
 
 				https.get(baseQuery, function(res1) {
@@ -145,7 +143,7 @@ function setupSalesforceConnection(req){
   					instanceUrl : instanceUrl,
   					accessToken : accessToken,
   					refreshToken : refreshToken,
-  					logLevel:'DEBUG'
+  					logLevel:'INFO'
 				});
 	
 	conn.on("refresh", function(accessToken, res) {
@@ -222,11 +220,6 @@ function sampleHttpCallToSFDC() {
 	// // write data to request body
 	// sfdcReq.write(postData);
 	// sfdcReq.end();
-
-
-
-
-
 }
 
 
