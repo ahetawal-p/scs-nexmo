@@ -18,11 +18,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 // Local DEV ORG
-var clientId='3MVG9AOp4kbriZOKLj5C2RBzAEYmq2vwb_mbkq6mjGeOHYuWS4nRDlPt3YMuT2M79Or0GsSvOq9lFzJhss9Ry';
-var secret='3496815519206622165';
+//var clientId='3MVG9AOp4kbriZOKLj5C2RBzAEYmq2vwb_mbkq6mjGeOHYuWS4nRDlPt3YMuT2M79Or0GsSvOq9lFzJhss9Ry';
+//var secret='3496815519206622165';
     
-//var clientId = process.env.CLIENT_KEY || '3MVG9sG9Z3Q1Rlbf6ERG76nkgAxCKOLBRlxOWmTfbjFKdX3c3xM_vbnjxw6OHNeGUpdHpwLYvqPUCJTSiNSA_';
-//var secret = process.env.CLIENT_SECRET || '3631655814888186810';
+var clientId = process.env.CLIENT_KEY || '3MVG9AOp4kbriZOKLj5C2RBzAEYmq2vwb_mbkq6mjGeOHYuWS4nRDlPt3YMuT2M79Or0GsSvOq9lFzJhss9Ry';
+var secret = process.env.CLIENT_SECRET || '3496815519206622165';
+
 var oauth2 = new jsforce.OAuth2({
         clientId: clientId,
         clientSecret: secret,
