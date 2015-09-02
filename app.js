@@ -5,15 +5,33 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-
+var jsforce = require('jsforce');
 var routes = require('./routes/index');
 var accounts = require('./routes/accounts');
+
+var constants = require('constants');
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+
+// Local DEV ORG
+var clientId='3MVG9AOp4kbriZOKLj5C2RBzAEYmq2vwb_mbkq6mjGeOHYuWS4nRDlPt3YMuT2M79Or0GsSvOq9lFzJhss9Ry';
+var secret='3496815519206622165';
+    
+//var clientId = process.env.CLIENT_KEY || '3MVG9sG9Z3Q1Rlbf6ERG76nkgAxCKOLBRlxOWmTfbjFKdX3c3xM_vbnjxw6OHNeGUpdHpwLYvqPUCJTSiNSA_';
+//var secret = process.env.CLIENT_SECRET || '3631655814888186810';
+var oauth2 = new jsforce.OAuth2({
+        clientId: clientId,
+        clientSecret: secret,
+        redirectUri: process.env.redirect_url || 'http://localhost:3000/oauth2/callback',
+        loginUrl : process.env.login_url || 'http://ahetawal-wsl:6109'
+    });
+
+app.set('oAuth2', oauth2);
+
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));

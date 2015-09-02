@@ -37,6 +37,35 @@ router.get('/inbound', function(req, res) {
 	// data.message = '123';
 	
 
+	var accessToken = req.app.get('accessToken');
+	var refreshToken = req.app.get('refreshToken');
+	var instanceUrl = req.app.get('instanceUrl');
+	var localOAuth2 = req.app.get('oAuth2');
+	constants.TOKEN_CONST = accessToken;
+
+
+	var conn = new jsforce.Connection({
+					oauth2 : localOAuth2,
+  					instanceUrl : instanceUrl,
+  					accessToken : accessToken,
+  					refreshToken : refreshToken,
+  					logLevel:'DEBUG'
+				});
+	
+	conn.on("refresh", function(accessToken, res) {
+			console.log("<<<<< Access Token Refreshed >>>");
+			console.log("Refresh token : " + res.refresh_token);
+			console.log("Instance url : " + res.instance_url);
+			
+			req.app.set('accessToken', accessToken);
+			req.app.set('refreshToken', res.refresh_token);
+			req.app.set('instanceUrl', res.instance_url);
+			constants.TOKEN_CONST = accessToken;
+
+	});
+
+	console.log("<<<< Access Token >>>>>> " + constants.TOKEN_CONST);
+
 	// Send it to SFDC
 	var postData = JSON.stringify({
 	  'Name' : 'Hello World! @ ' +  data.timestamp,
@@ -44,60 +73,80 @@ router.get('/inbound', function(req, res) {
 	  'Content' : data.message
 	});
 
+	conn.sobject("Social Post").create(postData, function(err, result) {
+			console.log("Resposne received from Salesforce....")
+			if (err) {
+				 console.error(err);
+			}
+			res.end();	
+		});
+
+
+
+
+
+
+
+
+
+
+
 	
-	var headerAuth = 'Bearer ' + constants.TOKEN_CONST;
-	console.log("<<<< Header AUTH TO BE USED >>>>>> " + headerAuth);
 
-	var options = {
-	  hostname: 'na6.salesforce.com',
-	  path: '/services/data/v34.0/sobjects/socialpost',
-	  method: 'POST',
-	  headers: {
-	    'Content-Type': 'application/json',
-	    'Authorization': headerAuth
-	  }
-	};
 
-	var sfdcReq = https.request(options, function(sfdcRes) {
-	  	console.log('STATUS: ' + sfdcRes.statusCode);
-	 	if(sfdcRes.statusCode == 201){
+	// var headerAuth = 'Bearer ' + constants.TOKEN_CONST;
+	// console.log("<<<< Header AUTH TO BE USED >>>>>> " + headerAuth);
+
+	// var options = {
+	//   hostname: 'na6.salesforce.com',
+	//   path: '/services/data/v34.0/sobjects/socialpost',
+	//   method: 'POST',
+	//   headers: {
+	//     'Content-Type': 'application/json',
+	//     'Authorization': headerAuth
+	//   }
+	// };
+
+	// var sfdcReq = https.request(options, function(sfdcRes) {
+	//   	console.log('STATUS: ' + sfdcRes.statusCode);
+	//  	if(sfdcRes.statusCode == 201){
 	 		
-		    console.log("Making outbound call");
-			var outBoundMessage = "Hello " + data.userName;
-			outBoundMessage += " Why are you asking me " + data.message + " ?";
-			var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
-			baseQuery+=data.ottURI + '&text=' + outBoundMessage;
+	// 	    console.log("Making outbound call");
+	// 		var outBoundMessage = "Hello " + data.userName;
+	// 		outBoundMessage += " Why are you asking me " + data.message + " ?";
+	// 		var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
+	// 		baseQuery+=data.ottURI + '&text=' + outBoundMessage;
 			
 			
-			console.log("Base query is : " + baseQuery);
+	// 		console.log("Base query is : " + baseQuery);
 
-			https.get(baseQuery, function(res1) {
-		  		res1.on("data", function(chunk) {
-		    		console.log("BODY: " + chunk);
-		    		res.end();
-		    	});
+	// 		https.get(baseQuery, function(res1) {
+	// 	  		res1.on("data", function(chunk) {
+	// 	    		console.log("BODY: " + chunk);
+	// 	    		res.end();
+	// 	    	});
 			
-			}).on('error', function(e) {
-		  			console.log("Got error: " + e.message);
-			});
+	// 		}).on('error', function(e) {
+	// 	  			console.log("Got error: " + e.message);
+	// 		});
 
-		 } else {
-		 	res.end();
-		 }
+	// 	 } else {
+	// 	 	res.end();
+	// 	 }
 
-	 	sfdcRes.on('data', function (chunk) {
-	    	console.log('Posted Data to SFDC' + chunk);
-	  	});
+	//  	sfdcRes.on('data', function (chunk) {
+	//     	console.log('Posted Data to SFDC' + chunk);
+	//   	});
 
-	});
+	// });
 
-	sfdcReq.on('error', function(e) {
-	  console.log('problem with SFDC request: ' + e.message);
-	});
+	// sfdcReq.on('error', function(e) {
+	//   console.log('problem with SFDC request: ' + e.message);
+	// });
 
-	// write data to request body
-	sfdcReq.write(postData);
-	sfdcReq.end();
+	// // write data to request body
+	// sfdcReq.write(postData);
+	// sfdcReq.end();
 
 
 });
@@ -147,5 +196,42 @@ router.post('/',function(req,res){
 	});
 	res.redirect(oauth2.getAuthorizationUrl({scope: 'api'}));
 });
+
+
+router.get('/oauth2/auth',function(req,res){
+	
+	var localOAuth2 = req.app.get('oAuth2');
+	console.log("OAuth Object is >> ");
+	console.log(localOAuth2);
+	res.redirect(localOAuth2.getAuthorizationUrl({scope: 'api id refresh_token'}));
+});
+
+
+router.get('/oauth2/callback',function(req,res){
+	
+	var localOAuth2 = req.app.get('oAuth2');
+
+	var conn = new jsforce.Connection({oauth2: localOAuth2, logLevel:'INFO'});
+	conn.authorize(req.query.code, function(err, userInfo) {
+		if (err) {
+			console.error(err);
+			return next(err);
+		}
+	console.log("Access token: " + conn.accessToken);
+	console.log("Refresh token: " + conn.refreshToken);
+	console.log("Instance Url: " + conn.instanceUrl);
+
+	req.app.set('accessToken', conn.accessToken);
+	req.app.set('refreshToken', conn.refreshToken);
+	req.app.set('instanceUrl', conn.instanceUrl);
+	
+	
+	res.redirect('/accounts');	
+	});
+
+});
+
+
+
 
 module.exports = router;

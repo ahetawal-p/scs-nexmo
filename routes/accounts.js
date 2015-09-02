@@ -5,25 +5,34 @@ var constants = require('../constants');
 
 /* GET accounts page. */
 router.get('/', function(req, res, next) {
-	var oauth2 = new jsforce.OAuth2({
-		clientId: req.session.clientId,
-		clientSecret: req.session.secret,
-		redirectUri: process.env.redirect_url || 'http://localhost:3000/accounts',
-		loginUrl : process.env.login_url || 'http://ahetawal-wsl:6109'
+	var accessToken = req.app.get('accessToken');
+	var refreshToken = req.app.get('refreshToken');
+	var instanceUrl = req.app.get('instanceUrl');
+	var localOAuth2 = req.app.get('oAuth2');
+	constants.TOKEN_CONST = accessToken;
+
+
+	var conn = new jsforce.Connection({
+					oauth2 : localOAuth2,
+  					instanceUrl : instanceUrl,
+  					accessToken : accessToken,
+  					refreshToken : refreshToken,
+  					logLevel:'DEBUG'
+				});
+	
+	conn.on("refresh", function(accessToken, res) {
+			console.log("<<<<< Access Token Refreshed >>>");
+			console.log("Refresh token : " + res.refresh_token);
+			console.log("Instance url : " + res.instance_url);
+			
+			req.app.set('accessToken', accessToken);
+			req.app.set('refreshToken', res.refresh_token);
+			req.app.set('instanceUrl', res.instance_url);
+			constants.TOKEN_CONST = accessToken;
+
 	});
 
-	var conn = new jsforce.Connection({oauth2: oauth2, logLevel:'INFO'});
-	debugger;
-	conn.authorize(req.query.code, function(err, userInfo) {
-		if (err) {
-			console.error(err);
-			return next(err);
-		}
-		req.session.accessToken = conn.accessToken;
-		req.session.instanceUrl = conn.instanceUrl;
-		
-		constants.TOKEN_CONST = conn.accessToken;
-		console.log("<<<< Access Token >>>>>> " + constants.TOKEN_CONST);
+	console.log("<<<< Access Token >>>>>> " + constants.TOKEN_CONST);
 
 		conn.query('SELECT id, name, (SELECT id, Subject FROM Cases) FROM Account LIMIT 10', function(err, result) {
 			if (err) {
@@ -34,7 +43,7 @@ router.get('/', function(req, res, next) {
 			res.render('accounts', {title: 'Accounts List', accounts: result.records});
 			//res.redirect('http://ahetawal-wsl:6109/services/socialengagement/oauth?code=Bearer ' + conn.accessToken);
 		});
-	});
+	
 });
 
 module.exports = router;
