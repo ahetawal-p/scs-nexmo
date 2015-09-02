@@ -47,8 +47,8 @@ router.get('/inbound', function(req, res) {
 
 	conn.sobject("socialpost").create(postData, function(err, result) {
 			console.log("Resposne received from Salesforce....")
-			if (err || !ret.success) { 
-				console.error(err, ret);
+			if (err || !result.success) { 
+				console.error(err, result);
 				res.end();
 			} else {
 				console.log("Making outbound call");
