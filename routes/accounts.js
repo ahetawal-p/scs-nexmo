@@ -24,7 +24,8 @@ router.get('/', function(req, res, next) {
 			//res.redirect('http://ahetawal-wsl:6109/services/socialengagement/oauth?code=Bearer ' + conn.accessToken);
 			});
 		} else {
-			res.send("Cannot find connection");
+			console.log("Cannot find connection");
+			res.redirect('/');
 		}
 	});
 	

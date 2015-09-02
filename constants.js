@@ -1,5 +1,6 @@
 var memjs = require('memjs');
 var storage = memjs.Client.create();
+var jsforce = require('jsforce');
 
 var createConnection = function(oAuthData, localOAuth2) {
 
