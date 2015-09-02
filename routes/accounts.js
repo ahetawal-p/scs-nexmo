@@ -3,14 +3,17 @@ var router = express.Router();
 var jsforce = require('jsforce');
 var memjs = require('memjs');
 var storage = memjs.Client.create();
+var util = require('../constants');
 
 /* GET accounts page. */
 router.get('/', function(req, res, next) {
 
-	storage.get('sfdc_conn', function(err, conn){
-		console.log("Connection is >> ");
-		console.log(conn);
-		if(conn){
+	storage.get('oAuthData', function(err, data){
+		console.log("Data is >>");
+		console.log(data);
+		if(data){
+			var conn = util.getConnection(data, req.app.get('oAuth2'));
+
 			conn.query('SELECT id, name, (SELECT id, Subject FROM Cases) FROM Account LIMIT 10', function(err, result) {
 			if (err) {
 				 console.error(err);

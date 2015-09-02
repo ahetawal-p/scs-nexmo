@@ -4,11 +4,15 @@ var jsforce = require('jsforce');
 var http = require("http");
 var https = require("https");
 
+var util = require('../constants');
+
+
 var memjs = require('memjs');
 var storage = memjs.Client.create();
 
 /* GET home page. */
 router.get('/', function(req, res) {
+	
 	res.render('index');
 
 });
@@ -38,11 +42,12 @@ router.get('/inbound', function(req, res) {
 	// data.message = '123';
 	
 
-	storage.get('sfdc_conn', function(err, conn){
-		if(conn){
-			console.log("Connection is >> ");
-			console.log(conn);
-			
+	storage.get('oAuthData', function(err, data){
+		console.log("Data is >> ");
+		console.log(data);
+		if(data){
+			var conn = util.getConnection(data, req.app.get('oAuth2'));
+
 			// Send it to SFDC
 			var postData = {
 			  'Name' : 'Hello World! @ ' +  data.timestamp,
@@ -77,6 +82,7 @@ router.get('/inbound', function(req, res) {
 				});
 
 		} else {
+			console.log(err);
 			res.send("Cannot find connection");
 		}
 	})
@@ -116,6 +122,8 @@ router.get('/oauth2/auth',function(req,res){
 router.get('/oauth2/callback',function(req,res){
 	
 	var localOAuth2 = req.app.get('oAuth2');
+	var oAuthData = {};
+
 
 	var conn = new jsforce.Connection({oauth2: localOAuth2, logLevel:'INFO'});
 	conn.authorize(req.query.code, function(err, userInfo) {
@@ -127,11 +135,12 @@ router.get('/oauth2/callback',function(req,res){
 	console.log("Refresh token: " + conn.refreshToken);
 	console.log("Instance Url: " + conn.instanceUrl);
 
-	req.app.set('accessToken', conn.accessToken);
-	req.app.set('refreshToken', conn.refreshToken);
-	req.app.set('instanceUrl', conn.instanceUrl);
+	oAuthData['accessToken'] = conn.accessToken;
+	oAuthData['refreshToken'] = conn.refreshToken;
+	oAuthData['instanceUrl'] = conn.instanceUrl;
 	
-	storage.set('sfdc_conn', setupSalesforceConnection(req));
+	console.log('Setting data in memchache...');
+	storage.set('oAuthData', oAuthData);
 
 	res.redirect('/accounts');	
 	});
