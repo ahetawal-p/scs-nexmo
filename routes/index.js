@@ -39,11 +39,11 @@ router.get('/inbound', function(req, res) {
 	var conn = constants.SFDC_CONN;
 
 	// Send it to SFDC
-	var postData = JSON.stringify({
+	var postData = {
 	  'Name' : 'Hello World! @ ' +  data.timestamp,
 	  'R6PostId' : data.messageId,
 	  'Content' : data.message
-	});
+	}
 
 	conn.sobject("socialpost").create(postData, function(err, result) {
 			console.log("Resposne received from Salesforce....")
@@ -164,6 +164,11 @@ function setupSalesforceConnection(req){
 }
 
 function sampleHttpCallToSFDC() {
+	// var postData = JSON.stringify({
+	//   'Name' : 'Hello World! @ ' +  data.timestamp,
+	//   'R6PostId' : data.messageId,
+	//   'Content' : data.message
+	// });
 	// var headerAuth = 'Bearer ' + constants.TOKEN_CONST;
 	// console.log("<<<< Header AUTH TO BE USED >>>>>> " + headerAuth);
 
