@@ -18,12 +18,12 @@ var createConnection = function(oAuthData, localOAuth2) {
 	conn.on("refresh", function(accessToken, res) {
 			
 		console.log("<<<<< Access Token Refreshed >>>");
-		console.log("Refresh token : " + res.refresh_token);
+		console.log("Refresh token : " + parsedOAuthdata.refresh_token);
 		console.log("Instance url : " + res.instance_url);
 
 		var oAuthData = {};
 		oAuthData['accessToken'] = accessToken;
-		oAuthData['refreshToken'] = res.refresh_token;
+		oAuthData['refreshToken'] = parsedOAuthdata.refresh_token;
 		oAuthData['instanceUrl'] = res.instance_url;
 
 		console.log('Setting data in memchache...');
