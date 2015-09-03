@@ -18,7 +18,7 @@ var createConnection = function(oAuthData, localOAuth2) {
 	conn.on("refresh", function(accessToken, res) {
 			
 		console.log("<<<<< Access Token Refreshed >>>");
-		console.log("Refresh token : " + parsedOAuthdata.refresh_token);
+		console.log("Refresh token : " + parsedOAuthdata.refreshToken);
 		console.log("Instance url : " + res.instance_url);
 
 		var oAuthData = {};
