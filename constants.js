@@ -23,7 +23,7 @@ var createConnection = function(oAuthData, localOAuth2) {
 
 		var oAuthData = {};
 		oAuthData['accessToken'] = accessToken;
-		oAuthData['refreshToken'] = parsedOAuthdata.refresh_token;
+		oAuthData['refreshToken'] = parsedOAuthdata.refreshToken;
 		oAuthData['instanceUrl'] = res.instance_url;
 
 		console.log('Setting data in memchache...');
