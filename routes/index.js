@@ -66,7 +66,7 @@ router.get('/inbound', function(req, res) {
 
 			conn.apex.post("/testAmit/chat", postData, function(err, result) {
 					console.log("Response received from Salesforce....");
-					if (err || !result.success) { 
+					if (err) { 
 						console.log("In Error part");
 						console.error(err, result);
 						res.end();
