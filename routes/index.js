@@ -42,6 +42,9 @@ router.get('/inbound', function(req, res) {
 	console.log(data);
 	console.log(isoDate);
 	
+	var brandMessage = "Welcome to Hackathon !!"
+	brandMessage+= "Get ready for the crazy ideas. \n Please use #question for any queries on the hack you will see."
+
 
 	storage.get('oAuthData', function(err, authData){
 		console.log("Auth Data is >> " + authData);
@@ -64,8 +67,29 @@ router.get('/inbound', function(req, res) {
 					console.log("Resposne received from Salesforce....")
 					if (err || !result.success) { 
 						console.error(err, result);
-					}
 						res.end();
+					} else if(data.message == 'subscribe' && data.messageType == 'event'){
+						console.log("This is a subscribe message ....");
+						var outBoundMessage = "Hey " + data.userName + "... ";
+						outBoundMessage += brandMessage
+						var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
+						baseQuery+=data.ottURI + '&text=' + outBoundMessage;
+						console.log("Base query is : " + baseQuery);
+
+						https.get(baseQuery, function(res1) {
+					  		res1.on("data", function(chunk) {
+					    		console.log("BODY: " + chunk);
+					    		res.end();
+					    	});
+						
+						}).on('error', function(e) {
+					  			console.log("Got error: " + e.message);
+						});
+
+					} else {
+						res.end();
+					}
+					
 				});
 		} else {
 			console.log(err);
