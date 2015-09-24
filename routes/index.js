@@ -57,7 +57,7 @@ router.get('/inbound', function(req, res) {
 			  'ottUri' 		: data.ottURI
 			}
 
-			conn.apex.post.("/testAmit/chat", postData, function(err, result) {
+			conn.apex.post("/testAmit/chat", postData, function(err, result) {
 					console.log("Resposne received from Salesforce....")
 					if (err || !result.success) { 
 						console.error(err, result);
