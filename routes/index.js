@@ -35,9 +35,12 @@ router.get('/inbound', function(req, res) {
 	data.messageId = req.query.message_id;
 	data.messageType =req.query.type;
 
+	var dateObj = new Date(data.timestamp);
+	var isoDate = dateObj.toISOString();
+
 	console.log("Data Object is ");
 	console.log(data);
-
+	console(isoDate);
 	
 
 	storage.get('oAuthData', function(err, authData){
@@ -50,7 +53,7 @@ router.get('/inbound', function(req, res) {
 			  'username' 	: data.userName,
 			  'userId' 		: data.fromUserId,
 			  'message' 	: data.message,
-			  'timestamp' 	: data.timestamp,
+			  'timestamp' 	: isoDate,
 			  'messageId'	: data.messageId,
 			  'messageType' : data.messageType,
 			  'userImg' 	: data.userImg,
