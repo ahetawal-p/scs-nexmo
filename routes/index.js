@@ -45,6 +45,7 @@ router.get('/inbound', function(req, res) {
 	var brandMessage = "Welcome to Hackathon !! ";
 	brandMessage+= "Get ready for the crazy ideas. \n Please use #question for any queries on the hack you will see.";
 
+	console.log("Brand message is : " + brandMessage);
 
 	storage.get('oAuthData', function(err, authData){
 		console.log("Auth Data is >> " + authData);
@@ -64,8 +65,9 @@ router.get('/inbound', function(req, res) {
 			}
 
 			conn.apex.post("/testAmit/chat", postData, function(err, result) {
-					console.log("Resposne received from Salesforce....")
+					console.log("Response received from Salesforce....");
 					if (err || !result.success) { 
+						console.log("In Error part");
 						console.error(err, result);
 						res.end();
 					} else if(data.message == 'subscribe' && data.messageType == 'event'){
@@ -90,7 +92,7 @@ router.get('/inbound', function(req, res) {
 						console.log("IN Final else");
 						res.end();
 					}
-					
+					console.log("Response received from Salesforce.... END...");
 				});
 		} else {
 			console.log(err);
