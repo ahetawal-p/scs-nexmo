@@ -40,7 +40,7 @@ router.get('/inbound', function(req, res) {
 
 	console.log("Data Object is ");
 	console.log(data);
-	console(isoDate);
+	console.log(isoDate);
 	
 
 	storage.get('oAuthData', function(err, authData){
