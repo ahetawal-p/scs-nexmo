@@ -43,7 +43,7 @@ router.get('/inbound', function(req, res) {
 	console.log(isoDate);
 	
 	var brandMessage = "Welcome to Hackathon !!\n";
-	brandMessage+= "Get ready for the crazy ideas. Please use #question for any queries on the hack you will see.";
+	brandMessage+= "Get ready for the crazy ideas.\nPlease use #question for any queries on the hacks you will see.";
 
 	console.log("Brand message is : " + brandMessage);
 
