@@ -42,8 +42,8 @@ router.get('/inbound', function(req, res) {
 	console.log(data);
 	console.log(isoDate);
 	
-	var brandMessage = "Welcome to Hackathon !! ";
-	brandMessage+= "Get ready for the crazy ideas. \n Please use #question for any queries on the hack you will see.";
+	var brandMessage = "Welcome to Hackathon !!\n";
+	brandMessage+= "Get ready for the crazy ideas. Please use #question for any queries on the hack you will see.";
 
 	console.log("Brand message is : " + brandMessage);
 
@@ -66,14 +66,19 @@ router.get('/inbound', function(req, res) {
 
 			conn.apex.post("/testAmit/chat", postData, function(err, result) {
 					console.log("Response received from Salesforce....");
+					console.log(result);
 					if (err) { 
 						console.log("In Error part");
 						console.error(err, result);
 						res.end();
 					} else if(data.message == 'subscribe' && data.messageType == 'event'){
 						console.log("This is a subscribe message ....");
-						var outBoundMessage = "Hey " + data.userName + "... ";
+						
+						var outBoundMessage = "Hey " + data.userName + "...\n";
 						outBoundMessage += brandMessage;
+						outBoundMessage = require('querystring').escape(outBoundMessage);
+						console.log(outBoundMessage);
+
 						var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
 						baseQuery+=data.ottURI + '&text=' + outBoundMessage;
 						console.log("Base query is : " + baseQuery);
