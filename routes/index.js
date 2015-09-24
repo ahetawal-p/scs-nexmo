@@ -18,6 +18,8 @@ router.get('/', function(req, res) {
 });
 
 
+
+
 /* GET home page. */
 router.get('/inbound', function(req, res) {
 	
@@ -36,10 +38,6 @@ router.get('/inbound', function(req, res) {
 	console.log("Data Object is ");
 	console.log(data);
 
-
-	// data.timestamp = '123';
-	// data.messageId = '12';
-	// data.message = '123';
 	
 
 	storage.get('oAuthData', function(err, authData){
@@ -49,45 +47,108 @@ router.get('/inbound', function(req, res) {
 
 			// Send it to SFDC
 			var postData = {
-			  'Name' : 'Hello World! @ ' +  data.timestamp,
-			  'R6PostId' : data.messageId,
-			  'Content' : data.message
+			  'username' 	: data.userName,
+			  'userId' 		: data.fromUserId,
+			  'message' 	: data.message,
+			  'timestamp' 	: data.timestamp,
+			  'messageId'	: data.messageId,
+			  'messageType' : data.messageType,
+			  'userImg' 	: data.userImg,
+			  'ottUri' 		: data.ottURI
 			}
 
-			conn.sobject("socialpost").create(postData, function(err, result) {
+			conn.apex.post.("/testAmit/chat", postData, function(err, result) {
 					console.log("Resposne received from Salesforce....")
 					if (err || !result.success) { 
 						console.error(err, result);
-						res.end();
-					} else {
-						console.log("Making outbound call");
-						var outBoundMessage = "Hello " + data.userName;
-						outBoundMessage += " Why are you asking me " + data.message + " ?";
-						var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
-						baseQuery+=data.ottURI + '&text=' + outBoundMessage;
-						console.log("Base query is : " + baseQuery);
-
-						https.get(baseQuery, function(res1) {
-					  		res1.on("data", function(chunk) {
-					    		console.log("BODY: " + chunk);
-					    		res.end();
-					    	});
-						
-						}).on('error', function(e) {
-					  			console.log("Got error: " + e.message);
-						});
 					}
-					
+						res.end();
 				});
-
 		} else {
 			console.log(err);
 			res.send("Cannot find connection");
 		}
 	})
-	
-	
 });
+
+
+
+
+
+
+
+
+
+/* ORIGINAL CALL GET home page. */
+// router.get('/inbound', function(req, res) {
+	
+// 	console.log("Inbound Request reached...");
+	
+// 	var data = {};
+// 	data.userImg = req.query.user_img;
+// 	data.userName = req.query.user_name;
+// 	data.message = req.query.text;
+// 	data.timestamp = req.query.message_timestamp;
+// 	data.fromUserId = req.query.user_id;
+// 	data.ottURI = req.query.from;
+// 	data.messageId = req.query.message_id;
+// 	data.messageType =req.query.type;
+
+// 	console.log("Data Object is ");
+// 	console.log(data);
+
+
+// 	// data.timestamp = '123';
+// 	// data.messageId = '12';
+// 	// data.message = '123';
+	
+
+// 	storage.get('oAuthData', function(err, authData){
+// 		console.log("Auth Data is >> " + authData);
+// 		if(authData){
+// 			var conn = util.getConnection(authData, req.app.get('oAuth2'));
+
+// 			// Send it to SFDC
+// 			var postData = {
+// 			  'Name' : 'Hello World! @ ' +  data.timestamp,
+// 			  'R6PostId' : data.messageId,
+// 			  'Content' : data.message
+// 			}
+
+// 			conn.sobject("socialpost").create(postData, function(err, result) {
+// 					console.log("Resposne received from Salesforce....")
+// 					if (err || !result.success) { 
+// 						console.error(err, result);
+// 						res.end();
+// 					} else {
+// 						console.log("Making outbound call");
+// 						var outBoundMessage = "Hello " + data.userName;
+// 						outBoundMessage += " Why are you asking me " + data.message + " ?";
+// 						var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
+// 						baseQuery+=data.ottURI + '&text=' + outBoundMessage;
+// 						console.log("Base query is : " + baseQuery);
+
+// 						https.get(baseQuery, function(res1) {
+// 					  		res1.on("data", function(chunk) {
+// 					    		console.log("BODY: " + chunk);
+// 					    		res.end();
+// 					    	});
+						
+// 						}).on('error', function(e) {
+// 					  			console.log("Got error: " + e.message);
+// 						});
+// 					}
+					
+// 				});
+
+// 		} else {
+// 			console.log(err);
+// 			res.send("Cannot find connection");
+// 		}
+// 	})
+	
+	
+// });
 
 
 
