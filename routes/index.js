@@ -18,8 +18,6 @@ router.get('/', function(req, res) {
 });
 
 
-
-
 /* GET home page. */
 router.get('/inbound', function(req, res) {
 	
@@ -45,7 +43,15 @@ router.get('/inbound', function(req, res) {
 	var brandMessage = "Welcome to Hackathon !!\n";
 	brandMessage+= "Get ready for the crazy ideas.\nPlease use #question for any queries on the hacks you will see.";
 
-	console.log("Brand message is : " + brandMessage);
+	var imageUrl = 'http://api.randomuser.me/portraits/thumb/women/39.jpg';
+	if(data.userName == 'Golf') {
+		imageUrl = "http://api.randomuser.me/portraits/thumb/men/91.jpg";
+	} else if(data.userName == 'Amit H') {
+		imageUrl = "http://api.randomuser.me/portraits/thumb/women/91.jpg";
+	} else if(data.userName = 'Nong'){
+		imageUrl = "http://api.randomuser.me/portraits/thumb/men/80.jpg";
+	}
+
 
 	storage.get('oAuthData', function(err, authData){
 		console.log("Auth Data is >> " + authData);
@@ -60,7 +66,7 @@ router.get('/inbound', function(req, res) {
 			  'timestamp' 	: isoDate,
 			  'messageId'	: data.messageId,
 			  'messageType' : data.messageType,
-			  'userImg' 	: data.userImg,
+			  'userImg' 	: imageUrl,
 			  'ottUri' 		: data.ottURI
 			}
 
