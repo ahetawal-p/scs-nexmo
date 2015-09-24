@@ -45,7 +45,7 @@ router.get('/inbound', function(req, res) {
 
 	var imageUrl = 'http://api.randomuser.me/portraits/thumb/women/39.jpg';
 	if(data.userName == 'Golf') {
-		imageUrl = "http://api.randomuser.me/portraits/thumb/men/91.jpg";
+		imageUrl = "http://api.randomuser.me/portraits/thumb/men/40.jpg";
 	} else if(data.userName == 'Amit H') {
 		imageUrl = "http://api.randomuser.me/portraits/thumb/women/91.jpg";
 	} else if(data.userName = 'Nong'){
