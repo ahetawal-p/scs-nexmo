@@ -42,8 +42,8 @@ router.get('/inbound', function(req, res) {
 	console.log(data);
 	console.log(isoDate);
 	
-	var brandMessage = "Welcome to Hackathon !!"
-	brandMessage+= "Get ready for the crazy ideas. \n Please use #question for any queries on the hack you will see."
+	var brandMessage = "Welcome to Hackathon !! ";
+	brandMessage+= "Get ready for the crazy ideas. \n Please use #question for any queries on the hack you will see.";
 
 
 	storage.get('oAuthData', function(err, authData){
@@ -71,7 +71,7 @@ router.get('/inbound', function(req, res) {
 					} else if(data.message == 'subscribe' && data.messageType == 'event'){
 						console.log("This is a subscribe message ....");
 						var outBoundMessage = "Hey " + data.userName + "... ";
-						outBoundMessage += brandMessage
+						outBoundMessage += brandMessage;
 						var baseQuery = 'https://api.nexmo.com/ott/poc/chat/json?api_key=7a403ebf&api_secret=43b9ec8c&type=text&to=';
 						baseQuery+=data.ottURI + '&text=' + outBoundMessage;
 						console.log("Base query is : " + baseQuery);
@@ -87,6 +87,7 @@ router.get('/inbound', function(req, res) {
 						});
 
 					} else {
+						console.log("IN Final else");
 						res.end();
 					}
 					
