@@ -41,7 +41,7 @@ router.get('/inbound', function(req, res) {
 	console.log(isoDate);
 	
 	var brandMessage = "Welcome to Hackathon !!\n";
-	brandMessage+= "Get ready for the crazy ideas.\nPlease use #question for any queries on the hacks you will see.";
+	brandMessage+= "Get ready for the crazy ideas.\nPlease use #q for any queries on the hacks you will see.";
 
 	var imageUrl = 'http://api.randomuser.me/portraits/thumb/women/39.jpg';
 	if(data.userName == 'Golf') {
