@@ -48,8 +48,10 @@ router.get('/inbound', function(req, res) {
 		imageUrl = "http://api.randomuser.me/portraits/thumb/men/40.jpg";
 	} else if(data.userName == 'Amit H') {
 		imageUrl = "http://api.randomuser.me/portraits/thumb/women/91.jpg";
-	} else if(data.userName = 'Nong'){
+	} else if(data.userName == 'Nong'){
 		imageUrl = "http://api.randomuser.me/portraits/thumb/men/80.jpg";
+	} else {
+			imageUrl = "http://api.randomuser.me/portraits/thumb/men/73.jpg";
 	}
 
 
